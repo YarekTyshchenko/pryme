@@ -3,7 +3,6 @@
 import urllib2
 import base64
 from xml.dom import minidom
-import time
 
 projects = [
    'shopwindow/prime-swshared',
@@ -13,6 +12,11 @@ projects = [
    'darwin/prime-darwin'
 ]
 
+pryme = 0
+
+def init(globalPryme):
+    global pryme
+    pryme = globalPryme
 
 def message(pryme, message, source, target):
     if not pryme.nick in message:
@@ -22,18 +26,23 @@ def message(pryme, message, source, target):
     for project in projects:
         requests = parse(project)
         if len(requests) > 0:
-            pryme.send(target, project+" : "+str(len(requests)))
+            pryme.send(target, project + " : " + str(len(requests)))
         for request in requests:
-            pryme.send(target, "    "+displayRequest(request))
+            pryme.send(target, "    " + displayRequest(request))
+
 
 def displayRequest(request):
-   return "m"+request['id']+" v"+str(request['versions'])+" ["+request['branch']+"] : "+request['summary']
+    return ("m" + request['id'] +
+        " v" + str(request['versions']) +
+        " [" + request['branch'] + "] : " + request['summary']
+    )
+
 
 def parse(project):
     url = 'https://gitorious.affiliatewindow.com/' + project + '/merge_requests.xml?status=Open'
 
-    u = config.get('parser', 'username')
-    p = base64.b64decode(config.get('parser', 'password'))
+    u = pryme.config.get('parser', 'username')
+    p = base64.b64decode(pryme.config.get('parser', 'password'))
 
     # simple wrapper function to encode the username & pass
     def encodeUserData(user, password):
@@ -48,11 +57,11 @@ def parse(project):
     try:
         res = urllib2.urlopen(req)
     except:
-        print "Failed to retrieve merges for "+project
+        print "Failed to retrieve merges for " + project
         return []
 
     dom = minidom.parseString(res.read())
-    
+
     def getData(node, name):
         return str(node.getElementsByTagName(name)[0].firstChild.data)
 
@@ -66,7 +75,7 @@ def parse(project):
             'versions': node.getElementsByTagName('version').length,
             'branch': getData(node.getElementsByTagName('source_repository')[0], 'branch'),
         })
-    print "Found "+str(len(requests))+' requests'
+    print "Found " + str(len(requests)) + ' requests'
     return requests
 
 
