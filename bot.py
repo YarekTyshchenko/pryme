@@ -46,8 +46,9 @@ class Pryme:
 
         # Connect to the network
         self.server = self.irc.server()
-        print "Connecting: " + self.network + ':' + str(self.port) + " as " + self.nick + " and joining channel " + self.channel
+        print "Connecting: " + self.network + ':' + str(self.port) + " as " + self.nick
         self.server.connect(self.network, self.port, self.nick)
+        print  "Joining channel " + self.channel
         self.server.join(self.channel)
 
     def run(self):
@@ -71,6 +72,8 @@ class Pryme:
         for module in self.modules:
             try:
                 module.message(self, self.getMessage(event), self.getSource(event), self.getTarget(event))
+            except AttributeError:
+                pass
             except Exception as exception:
                 self.send(self.getTarget(event), "Module '"+str(module)+"' has crashed")
                 print exception
