@@ -59,7 +59,7 @@ class Pryme:
         self.msg(message, target)
 
     def getMessage(self, event):
-        return ''.join(event.arguments())
+        return ''.join(event.arguments()).split(' ')
 
     def getSource(self, event):
         return event.source().split('!')[0]

@@ -1,9 +1,10 @@
 def message(pryme, message, source, target):
-    if pryme.nick in message:
-        if "test" in message:
+	originalMessage = message[:]
+    if pryme.nick in message.pop(0):
+        if "test" in message.pop(0):
             pryme.send(
                 target,
-                "Message :'" + message +
+                "Message :'" + originalMessage +
                 "' from '" + source +
                 "' in channel '" + target + "'"
             )

@@ -19,9 +19,9 @@ def init(globalPryme):
     pryme = globalPryme
 
 def message(pryme, message, source, target):
-    if not pryme.nick in message:
+    if not pryme.nick in message.pop(0):
         return
-    if not "list" in message:
+    if not "list" in message.pop(0):
         return
     for project in projects:
         requests = parse(project)
